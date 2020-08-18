@@ -1,0 +1,19 @@
+BootStrap: docker
+From: ubuntu:16.04
+
+
+%runscript
+  /opt/xnat-desktop/xnd
+
+%post
+
+  apt-get -y update
+  apt install -y unzip wget openjdk-8-jdk
+
+  cd /tmp
+  wget -O - https://bintray.com/nrgxnat/generic/download_file?file_path=xnd.0.96.linux.gtk.x86_64.java1.7.zip >xnat.zip
+
+  unzip /tmp/xnat.zip -d /opt
+  mv /opt/xnd* /opt/xnat-desktop
+
+  

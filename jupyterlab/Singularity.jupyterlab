@@ -1,0 +1,43 @@
+BootStrap: docker
+From: ubuntu:18.04
+
+
+%startscript
+
+
+%runscript
+  exec jupyter lab
+
+%files
+ startjupyter.sh 
+
+%post
+  apt update -y
+  apt install -y wget python-pip python-dev ipython firefox
+
+  apt install -y python3-pip python3-dev curl python3 libcurl4-openssl-dev libssl-dev
+  python3 -m pip install ipykernel
+  python3 -m ipykernel install --user
+  pip3 install numpy \
+	pandas \
+	fastparquet \
+	tables \
+	pyarrow \
+	plotly \
+ 	seaborn \
+	xlrd
+
+
+  cd /tmp
+  curl -sL https://deb.nodesource.com/setup_10.x | bash -
+  apt install -y nodejs
+
+  pip3 install jupyter jupyterlab
+     
+
+  
+  jupyter labextension install @jupyterlab/github
+
+  pip3 install jupyterlab_github
+
+ jupyter serverextension enable --sys-prefix jupyterlab_github

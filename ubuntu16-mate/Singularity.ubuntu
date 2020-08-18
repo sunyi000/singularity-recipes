@@ -1,0 +1,88 @@
+BootStrap: docker
+From: ubuntu:16.04
+
+%runscript 
+  exec vncserver "${@}"
+
+%startscript
+  exec vncserver "${@}"
+
+%environment
+  JAVA_VERSION=1.8.0_171
+  export PATH=/usr/lib/jvm/java-8-oracle/bin:/usr/bin:${PATH}
+  export JAVA_HOME=/usr/lib/jvm/java-8-oracle
+  export JRE_HOME=/usr/lib/jvm/java-8-oracle/jre/bin
+
+%files 
+%post
+
+  # Get dependencies
+  apt-get -y update
+
+  apt-get -y install software-properties-common python-software-properties debconf-utils
+  add-apt-repository ppa:webupd8team/java
+  add-apt-repository ppa:ubuntu-mate-dev/xenial-mate
+  add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
+  apt-get -y update
+  
+  apt-get install -y --no-install-recommends \
+    locales \
+    wget \
+    curl \
+    ca-certificates \
+    xauth \
+    xfonts-base \
+    xkb-data \
+    x11-xkb-utils \
+    libqt5x11extras5-dev \
+    tar \
+    gcc \
+    git \
+    vim \
+    ant \
+    openssl \
+    libssl-dev \
+    libqtwebkit-dev \
+    unzip \
+    x11-utils \
+    libpixman-1-0 \
+    libtasn1-3-bin \
+    libxcursor1 \
+    libxinerama1 \
+    apt-transport-https
+
+ #install java 1.8.0
+  echo debconf shared/accepted-oracle-license-v1-1 select true | \
+  debconf-set-selections
+
+  echo debconf shared/accepted-oracle-license-v1-1 seen true | \
+  debconf-set-selections
+
+  apt-get install -y oracle-java8-installer \
+      oracle-java8-set-default
+
+  echo 'export JAVA_HOME=/usr/lib/jvm/java-8-oracle' >> $SINGULARITY_ENVIRONMENT
+  echo 'export JRE_HOME=/usr/lib/jvm/java-8-oracle/jre/bin' >> $SINGULARITY_ENVIRONMENT
+  echo 'export PATH=/usr/lib/jvm/java-8-oracle/bin:$PATH' >> $SINGULARITY_ENVIRONMENT
+
+  echo 'export LC_ALL=en_US.UTF-8' >> $SINGULARITY_ENVIRONMENT
+  echo 'export LANGUAGE=en_US.UTF-8' >> $SINGULARITY_ENVIRONMENT
+
+
+  # install tigervnc server
+  cd /tmp
+  wget https://bintray.com/tigervnc/stable/download_file?file_path=ubuntu-16.04LTS%2Famd64%2Ftigervncserver_1.8.0-1ubuntu1_amd64.deb
+  dpkg -i *_amd64.deb
+  
+  apt-get -y install ubuntu-mate-core
+
+  # set locales
+  echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+  locale-gen en_US.utf8
+  /usr/sbin/update-locale LANG=en_US.UTF-8
+  export LC_ALL=en_US.UTF-8
+  export LANG=en_US.UTF-8
+  export LANGUAGE="en_US.UTF-8"
+  echo 'LANGUAGE="en_US.UTF-8"' >> /etc/default/locale
+  echo 'LC_ALL="en_US.UTF-8"' >> /etc/default/locale
+

@@ -1,0 +1,40 @@
+BootStrap: docker
+From: ubuntu:18.04
+
+%runscript 
+  napari
+%startscript
+
+%post
+
+  # Get dependencies
+  apt-get -y update
+
+  apt-get install -y --no-install-recommends \
+    wget \
+    curl \
+    tar \
+    gcc \
+    git \
+    vim \
+    libssl-dev \
+    ca-certificates \
+    python3 \
+    python3-dev \
+    libqtwebkit-dev \
+    python3-setuptools \
+    python3-pip \
+    qtcreator pyqt5-dev-tools \
+    python3-pyqt5 \
+    qttools5-dev-tools
+
+  mkdir /opt/napari
+
+ update-alternatives --install /usr/bin/python python /usr/bin/python3 10
+
+  git clone https://github.com/napari/napari.git /opt/napari
+
+  cd /opt/napari
+  pip3 install --upgrade pip
+  
+  pip3 install -e .[all]

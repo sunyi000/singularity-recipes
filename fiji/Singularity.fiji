@@ -1,0 +1,20 @@
+BootStrap: docker
+From: ubuntu:16.04
+
+%environment
+    FIJIPATH=/opt/fiji/Fiji.app
+    export PATH=$FIJIPATH:$PATH
+
+
+%runscript
+  ImageJ-linux64 "$@"
+
+%post
+   apt -y update
+
+   apt install -y unzip wget build-essential git software-properties-common
+   apt install -y libxi6 libxrender1 libxtst6 libfreetype6 
+   cd /tmp
+    wget https://downloads.imagej.net/fiji/latest/fiji-linux64.zip
+
+  unzip -d /opt/fiji/ fiji-linux64.zip
